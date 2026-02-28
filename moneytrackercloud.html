@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowSpend Pro - Personal Finance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+         :root {
+            --primary: #f8e8e8;
+            --accent: #e5989b;
+            --deep: #b5838d;
+            --gold: #d4a373;
+            --bg: #fffafa;
+            --white: #ffffff;
+            --text: #4a4a4a;
+            --text-light: #9e9e9e;
+            --success: #84a59d;
+            --danger: #e5989b;
+            --shadow: 0 10px 30px rgba(181, 131, 141, 0.1);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding-bottom: 90px;
+            overflow-x: hidden;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .flex {
+            display: flex;
+        }
+        
+        .justify-between {
+            justify-content: space-between;
+        }
+        
+        .align-center {
+            align-items: center;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            padding: 15px 0;
+            text-align: center;
+        }
+        
+        header h1 {
+            color: var(--deep);
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        header p {
+            font-size: 11px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .sync-status {
+            font-size: 9px;
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .sync-active { color: var(--success); }
+        
+        .card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid rgba(181, 131, 141, 0.05);
+        }
+        
+        .main-balance {
+            background: linear-gradient(135deg, var(--deep) 0%, var(--accent) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+        }
+        
+        .nav-date-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 15px;
+            border-radius: 50px;
+        }
+        
+        .nav-date-container span {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .nav-arrow {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-card span {
+            font-size: 10px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        .stat-card p {
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+        
+        .stat-income {
+            color: var(--success);
+        }
+        
+        .stat-expense {
+            color: var(--danger);
+        }
+        
+        nav.bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            height: 75px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+        }
+        
+        .nav-item {
+            color: var(--text-light);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            gap: 4px;
+            transition: 0.2s;
+        }
+        
+        .nav-item.active {
+            color: var(--deep);
+            font-weight: 700;
+        }
+        
+        .fab {
+            width: 55px;
+            height: 55px;
+            background: var(--deep);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            margin-top: -40px;
+            box-shadow: 0 8px 20px rgba(181, 131, 141, 0.4);
+            border: 4px solid var(--bg);
+        }
+        
+        .form-group {
+            margin-bottom: 12px;
+        }
+        
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--deep);
+            margin-bottom: 4px;
+        }
+        
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--primary);
+            background: #fff;
+            outline: none;
+            font-size: 13px;
+        }
+        
+        input:focus {
+            border-color: var(--accent);
+        }
+        
+        .btn-primary {
+            background: var(--deep);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 14px;
+            width: 100%;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(181, 131, 141, 0.2);
+            transition: 0.3s;
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 18px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+        
+        .icon-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 12px;
+        }
+        
+        .item-content {
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .item-content h5 {
+            font-size: 13px;
+            margin-bottom: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .item-content p {
+            font-size: 10px;
+            color: var(--text-light);
+        }
+        
+        .item-amount {
+            font-weight: 700;
+            font-size: 13px;
+            text-align: right;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin-left: 10px;
+        }
+        
+        .action-btn {
+            cursor: pointer;
+            color: var(--text-light);
+            transition: 0.2s;
+            padding: 4px;
+        }
+        
+        .action-btn:hover {
+            color: var(--deep);
+        }
+        
+        .action-btn.delete:hover {
+            color: var(--danger);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            margin-top: 10px;
+        }
+        
+        .section-header h3 {
+            font-size: 15px;
+            color: var(--deep);
+        }
+        
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: flex;
+            align-items: flex-end;
+        }
+        
+        .modal-content {
+            background: white;
+            width: 100%;
+            border-radius: 30px 30px 0 0;
+            padding: 25px 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .pill-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .pill {
+            padding: 6px 12px;
+            background: var(--primary);
+            border-radius: 15px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+        
+        .pill.active {
+            background: var(--deep);
+            color: white;
+        }
+        
+        .icon-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+            max-height: 120px;
+            overflow-y: auto;
+            padding: 5px;
+            border: 1px solid var(--primary);
+            border-radius: 10px;
+        }
+        
+        .icon-opt {
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        
+        .icon-opt.selected {
+            background: var(--primary);
+            border-color: var(--accent);
+        }
+        
+        .recap-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--primary);
+            font-size: 14px;
+        }
+        
+        .badge {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            display: inline-block;
+        }
+        
+        .badge-give { background: #e8f5e9; color: var(--success); }
+        .badge-receive { background: #ffebee; color: var(--danger); }
+        .badge-settled { background: #f5f5f5; color: #999; }
+
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loading-screen">
+        <h2 style="color:var(--deep)">GlowSpend Pro</h2>
+        <p style="font-size: 12px; color: var(--text-light)">Menghubungkan ke Cloud...</p>
+    </div>
+
+    <div id="app" class="container"></div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item" id="nav-dashboard" onclick="navigate('dashboard')"><i data-lucide="layout-dashboard"></i><span>Beranda</span></div>
+        <div class="nav-item" id="nav-recount" onclick="navigate('recount')"><i data-lucide="pie-chart"></i><span>Rekap</span></div>
+        <div class="nav-item" onclick="showQuickAdd()">
+            <div class="fab"><i data-lucide="plus"></i></div>
+        </div>
+        <div class="nav-item" id="nav-debts" onclick="navigate('debts')"><i data-lucide="hand-coins"></i><span>Hutang</span></div>
+        <div class="nav-item" id="nav-settings" onclick="navigate('settings')"><i data-lucide="settings"></i><span>Pengaturan</span></div>
+    </nav>
+
+    <!-- Modals -->
+    <div id="quickAddModal" class="overlay hidden" onclick="closeModals()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="section-header">
+                <h3>Input Data Baru</h3><i data-lucide="x" onclick="toggleModal('quickAddModal', false)"></i></div>
+            <div class="stats-grid">
+                <button class="btn-primary" style="background: var(--success)" onclick="openForm('income')">Pemasukan</button>
+                <button class="btn-primary" style="background: var(--danger)" onclick="openForm('expense')">Pengeluaran</button>
+            </div>
+            <button class="btn-primary" style="background: var(--gold); margin-bottom: 10px;" onclick="openForm('transfer')">Pindah Saldo</button>
+            <button class="btn-primary" style="background: var(--deep); margin-bottom: 10px;" onclick="openForm('account')">Tambah Rekening</button>
+            <button class="btn-primary" style="background: #6a5acd;" onclick="openForm('debt')">Tambah Hutang</button>
+        </div>
+    </div>
+
+    <div id="formModal" class="overlay hidden" onclick="closeModals()">
+        <div class="modal-content" id="formContent" onclick="event.stopPropagation()"></div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const ICONS = ['banknote', 'sparkles', 'trending-up', 'laptop', 'shopping-bag', 'fuel', 'wrench', 'gift', 'smartphone', 'heart', 'file-text', 'utensils', 'coffee', 'user', 'baby', 'users', 'home', 'car', 'plane', 'tv', 'shopping-cart', 'piggy-bank', 'credit-card', 'graduation-cap', 'pill', 'hand-coins', 'landmark', 'wallet'];
+
+        const DEF_CAT_INC = [{ id: 'in1', name: 'Gaji', icon: 'banknote' }, { id: 'in2', name: 'Bonus', icon: 'sparkles' }, { id: 'in3', name: 'Investasi', icon: 'trending-up' }, { id: 'in4', name: 'Freelance', icon: 'laptop' }];
+        const DEF_CAT_EXP = [{ id: 'ex1', name: 'Pakaian', icon: 'shopping-bag' }, { id: 'ex2', name: 'Bensin', icon: 'fuel' }, { id: 'ex8', name: 'Makanan', icon: 'utensils' }, { id: 'ex9', name: 'Jajan', icon: 'coffee' }, { id: 'ex10', name: 'Bayar Hutang', icon: 'hand-coins' }];
+        const DEF_MEM = [{ id: 'm1', name: 'Diri sendiri', icon: 'user' }, { id: 'm2', name: 'Istri', icon: 'user-round' }, { id: 'm3', name: 'Suami', icon: 'user-round' }];
+
+        // Firebase Config
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'glowspend-pro-v1';
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let user = null;
+        let isSyncing = false;
+
+        window.state = {
+            currentView: 'dashboard',
+            selectedDate: new Date().toISOString().split('T')[0],
+            recapMonth: new Date().getMonth(),
+            recapYear: new Date().getFullYear(),
+            transactions: [],
+            accounts: [{ id: 'acc1', name: 'Dompet Utama', balance: 0 }],
+            debts: [],
+            categoriesIncome: DEF_CAT_INC,
+            categoriesExpense: DEF_CAT_EXP,
+            members: DEF_MEM,
+            settings: { theme: 'rose', lang: 'id', currency: 'IDR' },
+            selectedIcon: 'tag'
+        };
+
+        // Initialize Auth
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.error("Auth Error", err);
+            }
+        };
+
+        onAuthStateChanged(auth, (u) => {
+            user = u;
+            if (user) {
+                document.getElementById('loading-screen').classList.add('hidden');
+                loadUserData();
+            }
+        });
+
+        initAuth();
+
+        // Load & Sync Data
+        async function loadUserData() {
+            if (!user) return;
+
+            // Path: /artifacts/{appId}/users/{userId}/data/state
+            const userDocRef = doc(db, 'artifacts', appId, 'users', user.uid, 'data', 'state');
+            
+            // Initial Load
+            const snap = await getDoc(userDocRef);
+            if (snap.exists()) {
+                const data = snap.data();
+                // Merge data from cloud
+                window.state = { ...window.state, ...data };
+                render();
+            } else {
+                // First time user: Save default state to cloud
+                await saveToCloud();
+                render();
+            }
+
+            // Real-time listener
+            onSnapshot(userDocRef, (docSnap) => {
+                if (docSnap.exists() && !isSyncing) {
+                    window.state = { ...window.state, ...docSnap.data() };
+                    render();
+                }
+            }, (err) => console.error("Sync Error", err));
+        }
+
+        async function saveToCloud() {
+            if (!user) return;
+            isSyncing = true;
+            try {
+                const userDocRef = doc(db, 'artifacts', appId, 'users', user.uid, 'data', 'state');
+                // We save the entire relevant state in one doc (keeping it under 1MB)
+                const dataToSave = {
+                    transactions: window.state.transactions,
+                    accounts: window.state.accounts,
+                    debts: window.state.debts,
+                    categoriesIncome: window.state.categoriesIncome,
+                    categoriesExpense: window.state.categoriesExpense,
+                    members: window.state.members,
+                    settings: window.state.settings
+                };
+                await setDoc(userDocRef, dataToSave);
+            } catch (err) {
+                console.error("Cloud Save Failed", err);
+            } finally {
+                setTimeout(() => { isSyncing = false; }, 500);
+            }
+        }
+
+        // Global functions for UI
+        window.navigate = (view) => {
+            window.state.currentView = view;
+            render();
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`nav-${view}`)?.classList.add('active');
+        };
+
+        window.toggleModal = (id, show) => {
+            const m = document.getElementById(id);
+            if (show) m.classList.remove('hidden');
+            else m.classList.add('hidden');
+        };
+
+        window.closeModals = () => {
+            toggleModal('quickAddModal', false);
+            toggleModal('formModal', false);
+        };
+
+        window.showQuickAdd = () => toggleModal('quickAddModal', true);
+
+        window.changeDate = (days) => {
+            let d = new Date(window.state.selectedDate);
+            d.setDate(d.getDate() + days);
+            window.state.selectedDate = d.toISOString().split('T')[0];
+            render();
+        };
+
+        window.changeMonth = (offset) => {
+            window.state.recapMonth += offset;
+            if (window.state.recapMonth < 0) {
+                window.state.recapMonth = 11;
+                window.state.recapYear--;
+            } else if (window.state.recapMonth > 11) {
+                window.state.recapMonth = 0;
+                window.state.recapYear++;
+            }
+            render();
+        };
+
+        function formatCurrency(amt) {
+            const currency = window.state.settings.currency || 'IDR';
+            const locale = window.state.settings.lang === 'id' ? 'id-ID' : 'en-US';
+            return new Intl.NumberFormat(locale, {
+                style: 'currency',
+                currency: currency,
+                minimumFractionDigits: 0
+            }).format(amt);
+        }
+
+        function render() {
+            const appDiv = document.getElementById('app');
+            appDiv.innerHTML = '';
+            
+            // Add Sync Status
+            const syncBar = document.createElement('div');
+            syncBar.className = 'sync-status';
+            syncBar.innerHTML = `<i data-lucide="cloud"></i> ID Pengguna: ${user?.uid || 'Memuat...'}`;
+            appDiv.appendChild(syncBar);
+
+            switch (window.state.currentView) {
+                case 'dashboard': renderDashboard(appDiv); break;
+                case 'recount': renderRecap(appDiv); break;
+                case 'debts': renderDebts(appDiv); break;
+                case 'settings': renderSettings(appDiv); break;
+            }
+            lucide.createIcons();
+        }
+
+        function renderDashboard(container) {
+            const totalBalance = window.state.accounts.reduce((a, b) => a + b.balance, 0);
+            const filtered = window.state.transactions.filter(t => t.date === window.state.selectedDate);
+            const inc = filtered.filter(t => t.type === 'income').reduce((a, b) => a + b.amount, 0);
+            const exp = filtered.filter(t => t.type === 'expense').reduce((a, b) => a + b.amount, 0);
+
+            const dObj = new Date(window.state.selectedDate);
+            const locale = window.state.settings.lang === 'id' ? 'id-ID' : 'en-US';
+            const dateDisplay = dObj.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' });
+
+            container.innerHTML += `
+                <header><h1>GlowSpend</h1><p>Financial Elegance</p></header>
+                <div class="card main-balance">
+                    <h4>Saldo Keseluruhan</h4>
+                    <h2>${formatCurrency(totalBalance)}</h2>
+                    <div class="nav-date-container">
+                        <div class="nav-arrow" onclick="changeDate(-1)"><i data-lucide="chevron-left"></i></div>
+                        <span>${dateDisplay}</span>
+                        <div class="nav-arrow" onclick="changeDate(1)"><i data-lucide="chevron-right"></i></div>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card"><span>Pemasukan</span><p class="stat-income">+${formatCurrency(inc)}</p></div>
+                    <div class="stat-card"><span>Pengeluaran</span><p class="stat-expense">-${formatCurrency(exp)}</p></div>
+                </div>
+                <div class="section-header"><h3>Transaksi</h3></div>
+                <div id="txList">
+                    ${filtered.length ? [...filtered].reverse().map(t => `
+                        <div class="list-item">
+                            <div class="icon-circle" style="background: ${t.type === 'income' ? '#e8f5e9' : '#ffebee'}">
+                                <i data-lucide="${t.icon || 'circle'}" style="color: ${t.type === 'income' ? 'var(--success)' : 'var(--danger)'}"></i>
+                            </div>
+                            <div class="item-content"><h5>${t.text}</h5><p>${t.category} • ${t.account}</p></div>
+                            <div class="item-amount" style="color: ${t.type === 'income' ? 'var(--success)' : 'var(--danger)'}">${t.type === 'income' ? '+' : '-'}${formatCurrency(t.amount)}</div>
+                            <div class="actions">
+                                <i data-lucide="trash-2" class="action-btn delete" onclick="deleteTransaction('${t.id}')"></i>
+                            </div>
+                        </div>
+                    `).join('') : '<p class="text-center" style="color:#ccc; padding:20px">Tidak ada transaksi</p>'}
+                </div>
+                <div class="section-header"><h3>Rekening</h3></div>
+                ${window.state.accounts.map(acc => `
+                    <div class="list-item">
+                        <div class="icon-circle" style="background: var(--primary)"><i data-lucide="wallet" style="color:var(--deep)"></i></div>
+                        <div class="item-content"><h5>${acc.name}</h5><p>Tersedia</p></div>
+                        <div class="item-amount">${formatCurrency(acc.balance)}</div>
+                        <div class="actions">
+                            <i data-lucide="edit-2" class="action-btn" onclick="openForm('account', '${acc.id}')"></i>
+                            <i data-lucide="trash-2" class="action-btn delete" onclick="deleteAccount('${acc.id}')"></i>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function renderRecap(container) {
+            const label = new Date(window.state.recapYear, window.state.recapMonth).toLocaleString(window.state.settings.lang === 'id' ? 'id-ID' : 'en-US', { month: 'long', year: 'numeric' });
+            const monthTxs = window.state.transactions.filter(t => {
+                const d = new Date(t.date);
+                return d.getMonth() === window.state.recapMonth && d.getFullYear() === window.state.recapYear;
+            });
+            const inc = monthTxs.filter(t => t.type === 'income').reduce((a, b) => a + b.amount, 0);
+            const exp = monthTxs.filter(t => t.type === 'expense').reduce((a, b) => a + b.amount, 0);
+
+            container.innerHTML += `
+                <header><h1>Rekap Bulanan</h1>
+                    <div class="flex align-center justify-between" style="max-width:200px; margin: 10px auto;">
+                        <i data-lucide="chevron-left" class="nav-arrow" onclick="changeMonth(-1)"></i>
+                        <span style="font-weight:700; color:var(--deep)">${label}</span>
+                        <i data-lucide="chevron-right" class="nav-arrow" onclick="changeMonth(1)"></i>
+                    </div>
+                </header>
+                <div class="card">
+                    <div class="recap-row"><span>Pemasukan</span><span style="color:var(--success)">+${formatCurrency(inc)}</span></div>
+                    <div class="recap-row"><span>Pengeluaran</span><span style="color:var(--danger)">-${formatCurrency(exp)}</span></div>
+                    <div class="recap-row"><span>Selisih</span><span style="font-weight:700">${formatCurrency(inc - exp)}</span></div>
+                </div>
+                <div class="section-header"><h3>Riwayat Bulan Ini</h3></div>
+                ${monthTxs.slice().reverse().map(t => `<div class="list-item"><div class="item-content"><h5>${t.text}</h5><p>${t.date} • ${t.category}</p></div><div class="item-amount" style="color:${t.type === 'income' ? 'var(--success)' : 'var(--danger)'}">${formatCurrency(t.amount)}</div></div>`).join('') || '<p class="text-center">Kosong</p>'}
+            `;
+        }
+
+        function renderDebts(container) {
+            container.innerHTML += `<header><h1>Hutang & Piutang</h1><p>Kelola pinjaman Anda</p></header>
+                ${window.state.debts.map(d => {
+                    const isSettled = d.remaining <= 0;
+                    return `
+                    <div class="card">
+                        <div class="flex justify-between align-center">
+                            <div>
+                                <span class="badge ${isSettled ? 'badge-settled' : (d.type === 'give' ? 'badge-give' : 'badge-receive')}">
+                                    ${isSettled ? 'Lunas' : (d.type === 'give' ? 'Saya Memberi' : 'Saya Menerima')}
+                                </span>
+                                <h4 style="color:var(--deep)">${d.name}</h4>
+                                <p style="font-size:10px; color:var(--text-light)">Sisa Hutang: ${formatCurrency(d.remaining)}</p>
+                            </div>
+                            <div class="item-amount" style="color:${d.type === 'give' ? 'var(--success)' : 'var(--danger)'}">
+                                ${formatCurrency(d.amount)}
+                            </div>
+                        </div>
+                        <div style="margin-top:12px; display:flex; gap:8px;">
+                            ${!isSettled ? `<button class="btn-primary" style="padding: 6px 12px; font-size:11px" onclick="openForm('pay_debt', '${d.id}')">Bayar / Cicil</button>` : ''}
+                            <button class="btn-primary" style="background:#eee; color:#666; padding: 6px 12px; font-size:11px; box-shadow:none" onclick="deleteDebt('${d.id}')">Hapus</button>
+                        </div>
+                    </div>
+                `}).join('') || '<p class="text-center">Tidak ada hutang</p>'}
+            `;
+        }
+
+        function renderSettings(container) {
+            container.innerHTML += `
+                <header><h1>Pengaturan</h1></header>
+                <div class="section-header"><h3>Preferensi</h3></div>
+                <div class="card">
+                    <div class="form-group"><label>Bahasa</label>
+                        <select onchange="updateSetting('lang', this.value)">
+                            <option value="id" ${window.state.settings.lang === 'id' ? 'selected' : ''}>Indonesia</option>
+                            <option value="en" ${window.state.settings.lang === 'en' ? 'selected' : ''}>English</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Mata Uang</label>
+                        <select onchange="updateSetting('currency', this.value)">
+                            <option value="IDR" ${window.state.settings.currency === 'IDR' ? 'selected' : ''}>IDR (Rp)</option>
+                            <option value="USD" ${window.state.settings.currency === 'USD' ? 'selected' : ''}>USD ($)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="section-header"><h3>Kategori Pemasukan</h3></div>
+                <div class="card">${renderPills(window.state.categoriesIncome, 'categoriesIncome')} ${renderAddItem('categoriesIncome')}</div>
+                <div class="section-header"><h3>Kategori Pengeluaran</h3></div>
+                <div class="card">${renderPills(window.state.categoriesExpense, 'categoriesExpense')} ${renderAddItem('categoriesExpense')}</div>
+            `;
+        }
+
+        function renderPills(items, list) {
+            return `<div class="pill-grid">${items.map(i => `<div class="pill"><i data-lucide="${i.icon}"></i>${i.name}<i data-lucide="x" class="delete-btn" onclick="deleteSetting('${list}', '${i.id}')" style="width:12px"></i></div>`).join('')}</div>`;
+        }
+
+        function renderAddItem(list) {
+            return `
+                <div style="margin-top:15px">
+                    <div class="icon-selector" id="icon-sel-${list}">${ICONS.map(ic => `<div class="icon-opt" onclick="setIcon('${ic}', '${list}')" data-icon="${ic}"><i data-lucide="${ic}"></i></div>`).join('')}</div>
+                    <div class="flex" style="gap:10px"><input type="text" id="input-${list}" placeholder="Nama baru..."><button class="btn-primary" style="width:auto" onclick="addSetting('${list}')">Tambah</button></div>
+                </div>
+            `;
+        }
+
+        window.setIcon = (icon, list) => {
+            window.state.selectedIcon = icon;
+            document.querySelectorAll(`#icon-sel-${list} .icon-opt`).forEach(el => el.classList.remove('selected'));
+            document.querySelector(`#icon-sel-${list} .icon-opt[data-icon="${icon}"]`)?.classList.add('selected');
+        };
+
+        window.openForm = (type, id = null) => {
+            toggleModal('quickAddModal', false);
+            toggleModal('formModal', true);
+            const content = document.getElementById('formContent');
+            let item = null;
+            if (id) {
+                if (type === 'account') item = window.state.accounts.find(a => a.id === id);
+                else if (type === 'pay_debt') item = window.state.debts.find(d => d.id == id);
+            }
+
+            let html = `<div class="section-header"><h3>Data Baru</h3><i data-lucide="x" onclick="toggleModal('formModal', false)"></i></div><form id="activeForm">`;
+            
+            if (type === 'pay_debt') {
+                html += `
+                    <div class="form-group"><label>Nama Pinjaman</label><input type="text" value="${item.name}" disabled></div>
+                    <div class="form-group"><label>Jumlah Bayar</label><input type="number" name="amount" value="${item.remaining}" max="${item.remaining}" required></div>
+                    <div class="form-group"><label>Potong Dari Rekening</label><select name="account">${window.state.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('')}</select></div>
+                `;
+            } else if (type === 'debt') {
+                html += `
+                    <div class="form-group"><label>Tipe Hutang</label><select name="type"><option value="give">Saya Memberi Pinjaman</option><option value="receive">Saya Menerima Pinjaman</option></select></div>
+                    <div class="form-group"><label>Pilih Rekening</label><select name="account">${window.state.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('')}</select></div>
+                    <div class="form-group"><label>Nama Orang</label><input type="text" name="name" required></div>
+                    <div class="form-group"><label>Jumlah Total</label><input type="number" name="amount" required></div>
+                `;
+            } else if (type === 'account') {
+                html += `<div class="form-group"><label>Nama</label><input type="text" name="name" value="${item ? item.name : ''}" required></div><div class="form-group"><label>Saldo</label><input type="number" name="balance" value="${item ? item.balance : ''}" required></div>`;
+            } else if (type === 'transfer') {
+                html += `<div class="form-group"><label>Dari</label><select name="from">${window.state.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('')}</select></div><div class="form-group"><label>Ke</label><select name="to">${window.state.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('')}</select></div><div class="form-group"><label>Jumlah</label><input type="number" name="amount" required></div>`;
+            } else {
+                const cats = type === 'income' ? window.state.categoriesIncome : window.state.categoriesExpense;
+                html += `
+                    <div class="form-group"><label>Rekening</label><select name="account">${window.state.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('')}</select></div>
+                    <div class="form-group"><label>Jumlah</label><input type="number" name="amount" required></div>
+                    <div class="form-group"><label>Kategori</label><select name="category">${cats.map(c => `<option value="${c.name}">${c.name}</option>`).join('')}</select></div>
+                    <div class="form-group"><label>Keterangan</label><input type="text" name="text"></div>
+                `;
+            }
+            html += `<button type="submit" class="btn-primary">Simpan</button></form>`;
+            content.innerHTML = html;
+            lucide.createIcons();
+
+            document.getElementById('activeForm').onsubmit = (e) => {
+                e.preventDefault();
+                handleSubmit(new FormData(e.target), type, id);
+            };
+        };
+
+        async function handleSubmit(fd, type, id) {
+            const data = Object.fromEntries(fd.entries());
+            const now = new Date().toISOString().split('T')[0];
+
+            if (type === 'debt') {
+                const amt = parseFloat(data.amount);
+                const acc = window.state.accounts.find(a => a.id === data.account);
+                if (data.type === 'give') acc.balance -= amt; else acc.balance += amt;
+                window.state.transactions.push({ id: ''+Date.now(), type: data.type === 'give' ? 'expense' : 'income', amount: amt, text: `Pinjam: ${data.name}`, category: 'Hutang', account: acc.name, date: now, icon: 'hand-coins' });
+                window.state.debts.push({ id: ''+Date.now(), ...data, amount: amt, remaining: amt });
+            } else if (type === 'pay_debt') {
+                const amt = parseFloat(data.amount);
+                const debt = window.state.debts.find(d => d.id == id);
+                const acc = window.state.accounts.find(a => a.id === data.account);
+                debt.remaining -= amt;
+                if (debt.type === 'give') acc.balance += amt; else acc.balance -= amt;
+                window.state.transactions.push({ id: ''+Date.now(), type: debt.type === 'give' ? 'income' : 'expense', amount: amt, text: `Cicilan: ${debt.name}`, category: 'Hutang', account: acc.name, date: now, icon: 'banknote' });
+            } else if (type === 'income' || type === 'expense') {
+                const amt = parseFloat(data.amount);
+                const acc = window.state.accounts.find(a => a.id === data.account);
+                if (type === 'income') acc.balance += amt; else acc.balance -= amt;
+                window.state.transactions.push({ id: ''+Date.now(), type, ...data, amount: amt, account: acc.name, date: now, icon: (type === 'income' ? window.state.categoriesIncome : window.state.categoriesExpense).find(c => c.name === data.category)?.icon || 'circle' });
+            } else if (type === 'account') {
+                if(id) {
+                    const a = window.state.accounts.find(x => x.id === id);
+                    a.name = data.name; a.balance = parseFloat(data.balance);
+                } else window.state.accounts.push({ id: 'acc'+Date.now(), name: data.name, balance: parseFloat(data.balance) });
+            } else if (type === 'transfer') {
+                const from = window.state.accounts.find(a => a.id === data.from);
+                const to = window.state.accounts.find(a => a.id === data.to);
+                const amt = parseFloat(data.amount);
+                from.balance -= amt; to.balance += amt;
+                window.state.transactions.push({ id: ''+Date.now(), type: 'expense', amount: amt, text: `Transfer ke ${to.name}`, category: 'Transfer', account: from.name, date: now, icon: 'arrow-right-left' });
+            }
+
+            await saveToCloud();
+            toggleModal('formModal', false);
+            render();
+        }
+
+        window.deleteTransaction = async (id) => {
+            const tx = window.state.transactions.find(t => t.id == id);
+            const acc = window.state.accounts.find(a => a.name === tx.account);
+            if (acc) { if (tx.type === 'income') acc.balance -= tx.amount; else acc.balance += tx.amount; }
+            window.state.transactions = window.state.transactions.filter(t => t.id != id);
+            await saveToCloud(); render();
+        };
+
+        window.deleteAccount = async (id) => {
+            if (window.state.accounts.length <= 1) return;
+            window.state.accounts = window.state.accounts.filter(a => a.id !== id);
+            await saveToCloud(); render();
+        };
+
+        window.deleteDebt = async (id) => { window.state.debts = window.state.debts.filter(d => d.id != id); await saveToCloud(); render(); };
+        window.addSetting = async (l) => { const v = document.getElementById(`input-${l}`).value; if(!v) return; window.state[l].push({ id: ''+Date.now(), name: v, icon: window.state.selectedIcon }); await saveToCloud(); render(); };
+        window.deleteSetting = async (l, id) => { window.state[l] = window.state[l].filter(i => i.id !== id); await saveToCloud(); render(); };
+        window.updateSetting = async (k, v) => { window.state.settings[k] = v; await saveToCloud(); render(); };
+
+    </script>
+</body>
+
+</html>
